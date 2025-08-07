@@ -31,3 +31,12 @@ td::shared_ptr
 
 ### include/ros_include/aviaProcess.hpp
 继承的父类commonlidar，实际使用时定义父类指针，根据雷达类型调用子类的函数
+
+### src/ieskf_slam/ieskf.cpp
+size_t非负整数 头文件<cstddef>
+
+### src/ieskf_slam/frontEnd.cpp
+.normal() 求模
+
+### src/ieskf_slam/mapManager.cpp
+.cast<float>()将矩阵转换成float类型
