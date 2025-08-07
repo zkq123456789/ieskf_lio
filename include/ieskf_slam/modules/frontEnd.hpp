@@ -5,8 +5,10 @@
 #include "ieskf_slam/type/imu.hpp"
 #include "ieskf_slam/type/baseType.hpp"
 #include "ieskf_slam/type/pose.hpp"
+#include "ieskf_slam/type/syncMeasureGround.hpp"
+#include "ieskf_slam/modules/ieskf.hpp"
+#include "ieskf_slam/modules/mapManager.hpp"
 #include <pcl/common/transforms.h>
-#include "syncMeasureGround.hpp"
 namespace IESKFLIO{
 
     class FrontEnd: private ModuleBase
@@ -16,8 +18,12 @@ namespace IESKFLIO{
     private:
         std::deque<IMU> imu_deque_;
         std::deque<PointCloud> pointcloud_deque_;
-        std::deque<Pose> pose_deque_; 
+        std::deque<Pose> pose_deque_;
         PCLPointCloud current_pointcloud_;
+        std::shared_ptr<IESKF> ieskf_ptr;
+        std::shared_ptr<MapManager> map_ptr;
+        double imu_scale = 1.0;
+        bool imu_init = false;
     public:
         FrontEnd(const std::string &config_file_path,const std::string & prefix );
         ~FrontEnd() = default;
@@ -30,7 +36,9 @@ namespace IESKFLIO{
         // 跟踪
         bool track();
         // 点云读取
-        const PCLPointCloud &readCurrentPointCloud();    
+        const PCLPointCloud &readCurrentPointCloud();
+        //初始化
+        void initState(MeasureGround &measure_ground_);
     };
 
 }//namespace IESKFLIO

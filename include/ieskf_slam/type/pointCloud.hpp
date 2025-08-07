@@ -5,6 +5,7 @@ namespace IESKFLIO
 {
     using PCLPointCloud = pcl::PointCloud<Point>;
     using PCLPointCloudPtr = PCLPointCloud::Ptr;
+    using PCLPointCloudConstPtr = PCLPointCloud::ConstPtr;
     struct PointCloud{
         using Ptr = std::shared_ptr<PointCloud>;
         TimeStamp time_stamp;

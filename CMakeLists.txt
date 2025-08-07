@@ -27,6 +27,8 @@ catkin_package(
 
 add_library(ieskf_core  # 库名称：ieskf_core
   src/ieskf_slam/frontEnd.cpp
+  src/ieskf_slam/ieskf.cpp
+  src/ieskf_slam/mapManager.cpp
 )
 target_link_libraries(ieskf_core
   ${catkin_LIBRARIES}
