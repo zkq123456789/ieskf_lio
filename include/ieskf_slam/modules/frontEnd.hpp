@@ -6,6 +6,7 @@
 #include "ieskf_slam/type/baseType.hpp"
 #include "ieskf_slam/type/pose.hpp"
 #include <pcl/common/transforms.h>
+#include "syncMeasureGround.hpp"
 namespace IESKFLIO{
 
     class FrontEnd: private ModuleBase
@@ -24,6 +25,8 @@ namespace IESKFLIO{
         void addImu(const IMU&imu);
         void addPointCloud(const PointCloud&pointcloud);
         void addPose(const Pose&pose);
+        //同步
+        bool sync(MeasureGround &measure_ground_);
         // 跟踪
         bool track();
         // 点云读取

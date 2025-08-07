@@ -16,25 +16,50 @@ namespace IESKFLIO
         pose_deque_.push_back(pose);
         std::cout<<"receive Pose"<<std::endl;
     }
-    bool FrontEnd::track(){
+    bool FrontEnd::sync(MeasureGround &measure_ground_){
+        measure_ground_.imu_deque.clear();
+        measure_ground_.pointcloud = pointcloud_deque_.clean();
         if(pose_deque_.empty()||pointcloud_deque_.empty()){
             return false;
         }
-        // 寻找同一时刻的点云和位姿
-        
-        while (!pose_deque_.empty()&&pose_deque_.front().time_stamp.nsec()<pointcloud_deque_.front().time_stamp.nsec())
-        {   
-            std::cout<<"1"<<std::endl;
-            pose_deque_.pop_front();
-        }
-        if(pose_deque_.empty()){
+
+        double imu_begin_time = imu_deque_.front().time_stamp.sec();
+        double imu_end_time = imu_deque_.back().time_stamp.sec();
+        double cloud_start_time =pointcloud_deque_.front().time_stamp.sec();
+        double cloud_end_time = pointcloud_deque_.front().cloud_ptr->points.back().offset_time/1e9+cloud_start_time;
+
+        if(imu_begin_time<cloud_end_time){
+            pointcloud_deque_.pop_front();
             return false;
         }
-        while (!pointcloud_deque_.empty()&&pointcloud_deque_.front().time_stamp.nsec()<pose_deque_.front().time_stamp.nsec())
-        {
-            std::cout<<"2"<<std::endl;
-            pointcloud_deque_.pop_front();
+        if (imu_end_time<cloud_end_time){
+            return false;
         }
+        measure_ground_.pointcloud = pointcloud_deque_.front();
+        measure_ground_.lidar_begin_time = cloud_start_time;
+        measure_ground_.lidar_end_time = cloud_end_time;
+        while(!imu_deque_.empty()){
+            if(imu_deque_.front().time_stamp.toSec()<cloud_end_time){
+                measure_ground_.imu_deque.push_back(imu_deque_.front());
+                imu_deque_.pop_front();
+            }
+            else if(imu_deque_.front().time_stamp.toSec()>cloud_start_time){
+                imu_deque_.pop_front();
+            }else{
+                break;
+            }
+        }
+        return true;
+
+    }
+    bool FrontEnd::track(){
+        MeasureGround msg;
+        // 寻找同一时刻的点云和位姿
+        if(sync(msg)){
+            if()
+        }
+        
+        
         if(pointcloud_deque_.empty()){
             return false;
         }

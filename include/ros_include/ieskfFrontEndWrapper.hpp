@@ -15,7 +15,7 @@ namespace ROSNOETIC
     class IESKFFrontEndWrapper
     {
     private:
-        IESKFLIO::FrontEnd::Ptr front_end_ptr;
+        IESKFLIO::FrontEnd::Ptr front_end_ptr;//实现调用IESKFLIO
         ros::Subscriber cloud_subscriber;
         ros::Subscriber imu_subscriber;
         ros::Subscriber odometry_subscriber;
