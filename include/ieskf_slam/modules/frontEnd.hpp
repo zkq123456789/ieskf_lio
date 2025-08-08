@@ -5,9 +5,10 @@
 #include "ieskf_slam/type/imu.hpp"
 #include "ieskf_slam/type/baseType.hpp"
 #include "ieskf_slam/type/pose.hpp"
-#include "ieskf_slam/type/syncMeasureGround.hpp"
+#include "ieskf_slam/type/syncMeasureGroup.hpp"
 #include "ieskf_slam/modules/ieskf.hpp"
 #include "ieskf_slam/modules/mapManager.hpp"
+#include "ieskf_slam/modules/frontBackPropagate.hpp"
 #include <pcl/common/transforms.h>
 namespace IESKFLIO{
 
@@ -22,6 +23,7 @@ namespace IESKFLIO{
         PCLPointCloud current_pointcloud_;
         std::shared_ptr<IESKF> ieskf_ptr;
         std::shared_ptr<MapManager> map_ptr;
+        std::shared_ptr<frontBackPropagate> fbpropagate_ptr;
         double imu_scale = 1.0;
         bool imu_init = false;
     public:
@@ -32,13 +34,13 @@ namespace IESKFLIO{
         void addPointCloud(const PointCloud&pointcloud);
         void addPose(const Pose&pose);
         //同步
-        bool sync(MeasureGround &measure_ground_);
+        bool sync(MeasureGroup &measure_ground_);
         // 跟踪
         bool track();
         // 点云读取
         const PCLPointCloud &readCurrentPointCloud();
         //初始化
-        void initState(MeasureGround &measure_ground_);
+        void initState(MeasureGroup &measure_ground_);
     };
 
 }//namespace IESKFLIO

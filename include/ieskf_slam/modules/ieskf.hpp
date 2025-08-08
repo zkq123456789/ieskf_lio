@@ -1,12 +1,17 @@
-#include <Eigen/Core>
-#include <Eigen/Geometry>
+#ifndef IESKF_LIO_IESKF_HPP
+#define IESKF_LIO_IESKF_HPP
+
 #include "ieskf_slam/type/imu.hpp"
 #include "ieskf_slam/modules/moduleBase.hpp"
+#include "ieskf_slam/modules/math.hpp"
+#include <memory>
 
-namespace IESKFLIO{
+namespace IESKFLIO
+{
     class IESKF: private ModuleBase
     { 
         public:
+            typedef std::shared_ptr<IESKF> Ptr;
             struct State18
             {
                 Eigen::Quaterniond rotation;
@@ -29,8 +34,10 @@ namespace IESKFLIO{
             ~IESKF();
         private:
         State18 state_x;
+        Eigen::Matrix<double,18,18> P;//状态协方差矩阵
+        Eigen::Matrix<double,12,12> Q;//噪声协方差矩阵
         public:
-        void predict(const IMU& imu, double dt);
+        void predict(IMU imu, double dt);
         bool update();
         const State18& getState() const;
         void setState(State18& state);
@@ -38,3 +45,5 @@ namespace IESKFLIO{
     };
 
 }
+
+#endif // IESKF_LIO_IESKF_HPP

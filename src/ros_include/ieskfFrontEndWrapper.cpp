@@ -10,7 +10,6 @@ namespace ROSNOETIC
         nh.param<std::string>("wrapper/config_file_name",config_file_name,"");
         nh.param<std::string>("wrapper/lidar_topic",lidar_topic,"/lidar");
         nh.param<std::string>("wrapper/imu_topic",imu_topic,"/imu");
-        nh.param<std::string>("wrapper/odom_topic",odom_topic,"/Odometry");
         std::cout<<lidar_topic<<std::endl;
         std::cout<<imu_topic<<std::endl;
         front_end_ptr = std::make_shared<IESKFLIO::FrontEnd>(CONFIG_DIR+config_file_name,"front_end");

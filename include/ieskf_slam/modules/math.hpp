@@ -1,8 +1,11 @@
+#ifndef IESKF_LIO_MATH_HPP
+#define IESKF_LIO_MATH_HPP
+
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
 namespace IESKFLIO{
-    Eigen::Matrix4d compositeTransform(const Eigen::Quaterniond &q_, const Eigen::Vector3d &t_){
+    inline Eigen::Matrix4d compositeTransform(const Eigen::Quaterniond &q_, const Eigen::Vector3d &t_){
         Eigen::Matrix4d ans;
         ans.setIdentity();
         ans.block<3,3>(0,0) = q_.toRotationMatrix();
@@ -10,7 +13,7 @@ namespace IESKFLIO{
         return ans;
     }
         //将三维向量so3转换为3×3的反对称矩阵
-    Eigen::Matrix3d  skewSymmetric(const Eigen::Vector3d &so3){
+    inline Eigen::Matrix3d  skewSymmetric(const Eigen::Vector3d &so3){
         Eigen::Matrix3d so3_skew_sym;
         so3_skew_sym.setZero();
         so3_skew_sym(0,1) = -1*so3(2);
@@ -27,7 +30,7 @@ namespace IESKFLIO{
         */
     }
     //李代数转换成李群
-    Eigen::Matrix3d so3Exp(const Eigen::Vector3d &so3 ){
+    inline Eigen::Matrix3d so3Exp(const Eigen::Vector3d &so3 ){
         Eigen::Matrix3d  SO3;
         double so3_norm = so3.norm();
         if (so3_norm<=0.0000001)
@@ -47,7 +50,7 @@ namespace IESKFLIO{
         // - θ：旋转角度（so3_norm = ||so3||）
     }
     //伴随矩阵
-    Eigen::Matrix3d  A_T(const Eigen::Vector3d& v){
+    inline Eigen::Matrix3d  A_T(const Eigen::Vector3d& v){
         Eigen::Matrix3d res;
         double squaredNorm = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
         double norm = std::sqrt(squaredNorm);
@@ -61,3 +64,5 @@ namespace IESKFLIO{
         //Adexp(exp(θ^)) = I + (1-cosθ/θ²)·θ^ + ((1-sinθ/θ)/θ²)·(θ^)²
     }
 }
+
+#endif // IESKF_LIO_MATH_HPP

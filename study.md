@@ -46,4 +46,7 @@ size_t非负整数 头文件<cstddef>
 ### src/ieskf_slam/mapManager.cpp
 .cast<float>()将矩阵转换成float类型
 
-###
+### src/ieskf_slam/frontBackPropagate.cpp
+auto &&begin = *it_imu;
+auto &&end = *(it_imu+1);对于左值右值还有疑问
+STL 容器的 end() 迭代器不指向任何实际元素
