@@ -34,9 +34,16 @@ td::shared_ptr
 
 ### src/ieskf_slam/ieskf.cpp
 size_t非负整数 头文件<cstddef>
+.normalize() 归一化处理 单位向量
 
+李群李代数 伴随矩阵？
+
+![alt text](FxFw.png)
+![alt text](状态更新方程.png)
 ### src/ieskf_slam/frontEnd.cpp
 .normal() 求模
 
 ### src/ieskf_slam/mapManager.cpp
 .cast<float>()将矩阵转换成float类型
+
+###
