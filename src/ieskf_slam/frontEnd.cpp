@@ -6,6 +6,7 @@ namespace IESKFLIO
     {
         ieskf_ptr = std::make_shared<IESKF>(config_file_path,"ieskf");
         map_ptr  = std::make_shared<MapManager>(config_file_path,"map");
+        fbpropagate_ptr = std::make_shared<frontBackPropagate>();
     }
     void FrontEnd::addImu(const IMU &imu){
         imu_deque_.push_back(imu);
@@ -19,7 +20,7 @@ namespace IESKFLIO
         pose_deque_.push_back(pose);
         std::cout<<"receive Pose"<<std::endl;
     }
-    bool FrontEnd::sync(MeasureGround &measure_ground_){
+    bool FrontEnd::sync(MeasureGroup &measure_ground_){
         measure_ground_.imu_deque.clear();
         measure_ground_.pointcloud.cloud_ptr->clear();
         if(imu_deque_.empty()||pointcloud_deque_.empty()){
@@ -61,7 +62,7 @@ namespace IESKFLIO
 
     }
     bool FrontEnd::track(){
-        MeasureGround msg;
+        MeasureGroup msg;
         // 寻找同一时刻的点云和位姿
         
         if(sync(msg)){
@@ -73,6 +74,7 @@ namespace IESKFLIO
                 return false;
             }
             std::cout<<msg.imu_deque.size()<<" scale: "<<imu_scale<<std::endl;
+            fbpropagate_ptr->propagate(msg,ieskf_ptr);
             return true;
         }
         return false;
@@ -83,7 +85,7 @@ namespace IESKFLIO
         return current_pointcloud_;
     }
 
-    void FrontEnd::initState(MeasureGround &measure_ground_){
+    void FrontEnd::initState(MeasureGroup &measure_ground_){
         static int imu_count = 0;
         static Eigen::Vector3d sum_acc{0,0,0};
         static Eigen::Vector3d sum_gyro{0,0,0};
@@ -104,6 +106,8 @@ namespace IESKFLIO
             x.gravity = - sum_acc / sum_acc.norm() * GRAVITY;
             ieskf.setState(x);
             imu_init = true; 
+            fbpropagate_ptr->imu_scale = imu_scale;
+            fbpropagate_ptr->last_imu = measure_ground_.imu_deque.back();
         }
         return;
     } 
