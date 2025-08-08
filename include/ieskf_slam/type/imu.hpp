@@ -5,7 +5,7 @@ namespace IESKFLIO
 {
     /**
      * @param acceleration 加速度
-     * @param gyroscope 陀螺仪
+     * @param gyroscope 陀螺仪-角速度
     */
     class IMU
     {
