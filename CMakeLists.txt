@@ -34,7 +34,8 @@ add_library(ieskf_core  # 库名称：ieskf_core
 target_link_libraries(ieskf_core
   ${catkin_LIBRARIES}
   ${PCL_LIBRARIES}
-  ${YAML_CPP_LIBRARIES}
+  #${YAML_CPP_LIBRARIES}
+  yaml-cpp
 )
 
 include_directories(

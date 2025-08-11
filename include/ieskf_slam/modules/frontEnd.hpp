@@ -19,8 +19,7 @@ namespace IESKFLIO{
     private:
         std::deque<IMU> imu_deque_;
         std::deque<PointCloud> pointcloud_deque_;
-        std::deque<Pose> pose_deque_;
-        PCLPointCloud current_pointcloud_;
+        PCLPointCloud current_pointcloud;
         std::shared_ptr<IESKF> ieskf_ptr;
         std::shared_ptr<MapManager> map_ptr;
         std::shared_ptr<frontBackPropagate> fbpropagate_ptr;
@@ -32,15 +31,18 @@ namespace IESKFLIO{
         // 需要向前端传入imu和点云数据
         void addImu(const IMU&imu);
         void addPointCloud(const PointCloud&pointcloud);
-        void addPose(const Pose&pose);
+        
         //同步
         bool sync(MeasureGroup &measure_ground_);
         // 跟踪
         bool track();
-        // 点云读取
+        //点云读取
         const PCLPointCloud &readCurrentPointCloud();
         //初始化
         void initState(MeasureGroup &measure_ground_);
+        void updatePointCloud(MeasureGroup &measure_ground_);
+        //读取状态
+        IESKF::State18 readState();
     };
 
 }//namespace IESKFLIO
