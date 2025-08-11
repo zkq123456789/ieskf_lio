@@ -32,9 +32,20 @@ td::shared_ptr
 ### include/ros_include/aviaProcess.hpp
 继承的父类commonlidar，实际使用时定义父类指针，根据雷达类型调用子类的函数
 
+### include/ieskf_slam/modules/math.hpp
+.trace()返回矩阵的迹，对角线元素之和
+
 ### src/ieskf_slam/ieskf.cpp
 size_t非负整数 头文件<cstddef>
 .normalize() 归一化处理 单位向量
+
+J:的作用是来更新每一次迭代的方差。
+
+Z：残差矩阵，特征点到特征平面的距离，误差状态越接近真值，位置越确定，残差越小。
+
+H：观测方程的雅克比矩阵，第N行对应Z中第N个残差，每一行中的内容分别是残差也就是点到平面的距离关于状态量的导数。
+
+J_inv;误差状态到系统状态的转换雅可比的逆矩阵，主要处理旋转误差的非线性特性,将误差状态线性化
 
 李群李代数 伴随矩阵？
 
