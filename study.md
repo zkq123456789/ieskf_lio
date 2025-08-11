@@ -50,3 +50,60 @@ size_t非负整数 头文件<cstddef>
 auto &&begin = *it_imu;
 auto &&end = *(it_imu+1);对于左值右值还有疑问
 STL 容器的 end() 迭代器不指向任何实际元素
+
+### include/ieskf_slam/modules/moduleBase.hpp
+报错terminate called after throwing an instance of 'YAML::TypedBadConversion<double>'
+  what():  bad conversion
+void getParam(const std::string &param_name, T &val, T default_value)设置成返回 T，未设置return，
+
+## 待解决的问题
+在 C++ 项目中设置打印参数等级（如调试级、信息级、警告级、错误级），可以通过日志等级控制实现。以下是几种常用方案，结合你的项目代码结构给出推荐实现方式：
+
+```C++
+#pragma once
+#include <iostream>
+#include <string>
+
+// 定义日志等级（数字越大等级越高，输出越严格）
+enum LogLevel {
+    DEBUG = 0,   // 调试信息（最详细）
+    INFO = 1,    // 普通信息
+    WARNING = 2, // 警告
+    ERROR = 3,   // 错误
+    FATAL = 4    // 致命错误（程序可能崩溃）
+};
+
+// 全局日志等级（可在配置文件中读取或代码中修改）
+extern LogLevel g_log_level;
+
+// 日志输出宏（带等级判断）
+#define LOG(level, msg) \
+    do { \
+        if (level >= g_log_level) { \
+            std::cerr << "[" #level "] " << msg << std::endl; \
+        } \
+    } while(0)
+
+// 简化常用日志宏
+#define LOG_DEBUG(msg) LOG(DEBUG, msg)
+#define LOG_INFO(msg)  LOG(INFO, msg)
+#define LOG_WARN(msg)  LOG(WARNING, msg)
+#define LOG_ERROR(msg) LOG(ERROR, msg)
+#define LOG_FATAL(msg) LOG(FATAL, msg)
+```
+实际使用
+```C++
+#include "ieskf_slam/common/log.hpp"
+
+// 读取参数时打印（调试级）
+getParam("cov_gyroscope", cov_gyroscope, 0.1);
+LOG_DEBUG("cov_gyroscope: " << cov_gyroscope);  // 仅当等级为DEBUG时输出
+
+// 关键流程信息（信息级）
+LOG_INFO("IESKF initialized with Q matrix: " << Q);
+
+// 错误信息（错误级）
+if (measure_ground_.imu_deque.empty()) {
+    LOG_ERROR("No IMU data for prediction!");
+}
+```

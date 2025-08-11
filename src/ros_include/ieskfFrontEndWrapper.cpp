@@ -2,6 +2,7 @@
 #include "../../include/ros_include/ieskfFrontEndWrapper.hpp"
 #include "pcl/common/transforms.h"
 #include "../../include/globalDefine.hpp"
+#include "nav_msgs/Path.h"
 namespace ROSNOETIC
 {
     IESKFFrontEndWrapper::IESKFFrontEndWrapper(ros::NodeHandle &nh)
@@ -28,7 +29,7 @@ namespace ROSNOETIC
             exit(100);
         }
         curr_cloud_pub = nh.advertise<sensor_msgs::PointCloud2>("curr_cloud",100);
-
+        path_pub = nh.advertise<nav_msgs::Path>("path1",100);
         run();
     }
     
@@ -59,6 +60,16 @@ namespace ROSNOETIC
         }
     }
     void IESKFFrontEndWrapper::publishMsg(){
+        static nav_msgs::Path path;
+        auto X =  front_end_ptr->readState();
+        path.header.frame_id="map";
+        geometry_msgs::PoseStamped psd;
+        psd.pose.position.x = X.pos.x();
+        psd.pose.position.y = X.pos.y();
+        psd.pose.position.z = X.pos.z();
+        path.poses.push_back(psd);
+        path_pub.publish(path);
+
         auto cloud =front_end_ptr->readCurrentPointCloud();
         sensor_msgs::PointCloud2 msg;
         pcl::toROSMsg(cloud,msg);

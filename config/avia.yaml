@@ -4,16 +4,6 @@ wrapper:
   imu_topic: /livox/imu
   odom_topic: /Odometry
   lidar_type: 0 # 0)avia
-
-front_end:
-  extrin:
-    qx: 0
-    qy: 0
-    qz: 0
-    qw: 1
-    tx: 0
-    ty: 0
-    tz: 0
     
 front_end:
   extrin_r: [1,0,0,
@@ -21,7 +11,7 @@ front_end:
             0,0,1]
   extrin_t: [0.4165,0.2326,-0.2840]
 ieskf:
-  cov_gyroscope: 0.1
+  cov_gyroscope: 0.01
   cov_acceleration: 0.1
   cov_bias_acceleration: 0.0001
   cov_bias_gyroscope: 0.0001

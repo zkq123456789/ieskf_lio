@@ -32,8 +32,8 @@ namespace IESKFLIO{
                     std::cerr << "读取Yaml错误" << e.msg << std::endl;
                 }
             }
-            if(prefix != "" && config_node_["prefix"]){
-                config_node_ = config_node_["prefix"];
+            if(prefix != "" && config_node_[prefix]){
+                config_node_ = config_node_[prefix];
             }
         };
         virtual ~ModuleBase() = default;
@@ -45,7 +45,8 @@ namespace IESKFLIO{
          * @param default_value 默认值
         */
         template<typename T>
-        T getParam(const std::string &param_name, T &val, T default_value){
+        void getParam(const std::string &param_name, T &val, T default_value){
+            
             if(config_node_[param_name]){
                 val = config_node_[param_name].as<T>();
             }
@@ -53,7 +54,7 @@ namespace IESKFLIO{
                 std::cerr << "未找到参数" << param_name << std::endl;
                 val = default_value;
             }
-            //  std::cout<<name: << val <<std::endl; // 开启这一行即可在终端打印参数
+            // std::cout<<"name: "<< val <<std::endl; // 开启这一行即可在终端打印参数
         }
     };
 

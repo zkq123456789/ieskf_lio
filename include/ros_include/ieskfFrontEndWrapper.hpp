@@ -18,18 +18,14 @@ namespace ROSNOETIC
         IESKFLIO::FrontEnd::Ptr front_end_ptr;//实现调用IESKFLIO
         ros::Subscriber cloud_subscriber;
         ros::Subscriber imu_subscriber;
-        ros::Subscriber odometry_subscriber;
         ros::Publisher curr_cloud_pub;
+        ros::Publisher path_pub;
         
         std::shared_ptr<CommonLidarProcessInterface> lidar_process_ptr;
 
         // now status
-        IESKFLIO::PCLPointCloud curr_cloud;
-        Eigen::Quaterniond curr_q;
-        Eigen::Vector3d curr_t;
         void lidarCloudMsgCallBack(const sensor_msgs::PointCloud2Ptr &msg);
         void imuMsgCallBack(const sensor_msgs::ImuPtr &msg);
-        void odometryMsgCallBack(const nav_msgs::OdometryPtr &msg);
         void run();
         void publishMsg();
     public:

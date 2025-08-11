@@ -16,18 +16,15 @@ namespace IESKFLIO
         pointcloud_deque_.push_back(pointcloud);
         std::cout<<"receive Cloud"<<std::endl;
     }
-    void FrontEnd::addPose(const Pose&pose){
-        pose_deque_.push_back(pose);
-        std::cout<<"receive Pose"<<std::endl;
-    }
+    
     bool FrontEnd::sync(MeasureGroup &measure_ground_){
-        measure_ground_.imu_deque.clear();
-        measure_ground_.pointcloud.cloud_ptr->clear();
         if(imu_deque_.empty()||pointcloud_deque_.empty()){
-            std::cout<<"1111111111 "<<std::endl;
+            // std::cout<<"1111111111 "<<std::endl;
             return false;
         }
-
+        measure_ground_.imu_deque.clear();
+        measure_ground_.pointcloud.cloud_ptr->clear();
+        
         double imu_begin_time = imu_deque_.front().time_stamp.sec();
         double imu_end_time = imu_deque_.back().time_stamp.sec();
         double cloud_start_time =pointcloud_deque_.front().time_stamp.sec();
@@ -44,6 +41,7 @@ namespace IESKFLIO
             return false;
         }
         measure_ground_.pointcloud = pointcloud_deque_.front();
+        pointcloud_deque_.pop_front();
         measure_ground_.lidar_begin_time = cloud_start_time;
         measure_ground_.lidar_end_time = cloud_end_time;
         while(!imu_deque_.empty()){
@@ -63,8 +61,7 @@ namespace IESKFLIO
     }
     bool FrontEnd::track(){
         MeasureGroup msg;
-        // 寻找同一时刻的点云和位姿
-        
+        // 寻找同一时刻的点云和位姿 
         if(sync(msg)){
             if(!imu_init){
                 map_ptr->reset();
@@ -75,14 +72,28 @@ namespace IESKFLIO
             }
             std::cout<<msg.imu_deque.size()<<" scale: "<<imu_scale<<std::endl;
             fbpropagate_ptr->propagate(msg,ieskf_ptr);
+            updatePointCloud(msg);
             return true;
         }
         return false;
         
         
     }
+    void FrontEnd::updatePointCloud(MeasureGroup &measure_ground_){ 
+        // 滤波
+        VoxelFilter vf;
+        vf.setLeafSize(0.5,0.5,0.5);
+        vf.setInputCloud(measure_ground_.pointcloud.cloud_ptr);
+        vf.filter(*measure_ground_.pointcloud.cloud_ptr);
+        Eigen::Matrix4f trans;
+        trans.setIdentity();
+        auto state = ieskf_ptr->getState();
+        trans.block<3,3>(0,0) = state.rotation.toRotationMatrix().cast<float>();
+        trans.block<3,1>(0,3) = state.pos.cast<float>();
+        pcl::transformPointCloud(*measure_ground_.pointcloud.cloud_ptr,current_pointcloud,trans);
+    }
     const PCLPointCloud& FrontEnd::readCurrentPointCloud(){
-        return current_pointcloud_;
+        return current_pointcloud;
     }
 
     void FrontEnd::initState(MeasureGroup &measure_ground_){
@@ -110,5 +121,9 @@ namespace IESKFLIO
             fbpropagate_ptr->last_imu = measure_ground_.imu_deque.back();
         }
         return;
-    } 
+    }
+
+    IESKF::State18 FrontEnd::readState(){
+        return ieskf_ptr->getState();
+    }
 }
