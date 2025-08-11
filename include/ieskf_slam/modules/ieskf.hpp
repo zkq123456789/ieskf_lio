@@ -29,18 +29,28 @@ namespace IESKFLIO
                     gravity = Eigen::Vector3d::Zero();
                 }
             };
+            class CalcZHInterface
+            {
+            public:
+                virtual bool calculate(const State18&state,Eigen::MatrixXd & Z,Eigen::MatrixXd & H)=0;
+            };
+
+            std::shared_ptr<CalcZHInterface> calc_zh_ptr;
             
             IESKF(const std::string & config_path,const std::string &prefix);
             ~IESKF();
         private:
-        State18 state_x;
-        Eigen::Matrix<double,18,18> P;//状态协方差矩阵
-        Eigen::Matrix<double,12,12> Q;//噪声协方差矩阵
+            State18 state_x;
+            Eigen::Matrix<double,18,18> P;//状态协方差矩阵
+            Eigen::Matrix<double,12,12> Q;//噪声协方差矩阵
+            int iter_times = 10;
+
         public:
-        void predict(IMU imu, double dt);
-        bool update();
-        const State18& getState() const;
-        void setState(State18& state);
+            void predict(IMU imu, double dt);
+            bool update();
+            const State18& getState() const;
+            void setState(State18& state);
+            Eigen::Matrix<double,18,1> getStateError(const State18 &s1, const  State18 &s2);
 
     };
 
