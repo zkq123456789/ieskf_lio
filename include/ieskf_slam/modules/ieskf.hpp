@@ -29,13 +29,13 @@ namespace IESKFLIO
                     gravity = Eigen::Vector3d::Zero();
                 }
             };
-            class CalcZHInterface
+            class OBSERVEZHInterface
             {
             public:
-                virtual bool calculate(const State18&state,Eigen::MatrixXd & Z,Eigen::MatrixXd & H)=0;
+                virtual bool observe(const State18&state,Eigen::MatrixXd & Z,Eigen::MatrixXd & H)=0;
             };
 
-            std::shared_ptr<CalcZHInterface> calc_zh_ptr;
+            std::shared_ptr<OBSERVEZHInterface> ob_zh_ptr;
             
             IESKF(const std::string & config_path,const std::string &prefix);
             ~IESKF();

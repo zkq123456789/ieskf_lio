@@ -3,6 +3,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
+#include <vector>
 
 namespace IESKFLIO{
     inline Eigen::Matrix4d compositeTransform(const Eigen::Quaterniond &q_, const Eigen::Vector3d &t_){
@@ -69,6 +70,8 @@ namespace IESKFLIO{
         return res;
         //Adexp(exp(θ^)) = I + (1-cosθ/θ²)·θ^ + ((1-sinθ/θ)/θ²)·(θ^)²
     }
+
+    
 }
 
 #endif // IESKF_LIO_MATH_HPP

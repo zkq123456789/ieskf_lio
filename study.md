@@ -26,6 +26,19 @@ td::shared_ptr
 是 C++ 的共享智能指针，会自动跟踪对象的引用计数：
 当没有指针引用对象时，自动释放内存，避免内存泄漏。
 
+tr类型：
+
+是指向可修改对象的智能指针
+允许对指向的对象进行读写操作
+对应于boost::shared_ptr<PointCloud>
+ConstPtr类型：
+
+是指向常量对象的智能指针
+只允许对指向的对象进行只读操作
+不能通过该指针修改对象的内容
+对应于boost::shared_ptr<const PointCloud>
+
+
 ### include/globalDefine.hpp
 通过在CMakeists.txt中添加add_definitions(-DPROJ_DIR="${CMAKE_CURRENT_SOURCE_DIR}")将项目路径设置为全局宏
 
