@@ -80,14 +80,14 @@ namespace IESKFLIO
             Eigen::MatrixXd R_inv;
 
             
-            calc_zh_ptr->calculate(state_x_k, z_k, H);
+            ob_zh_ptr->observe(state_x_k, z_k, H);
             Eigen::MatrixXd H_t = H.transpose();
             // R 直接写死0.001
             double R = 0.001;
             K = (H_t * (1/R) * H+P_err.inverse()).inverse() * H_t * (1/R);
 
             Eigen::MatrixXd left = -1*K*z_k;
-            Eigen::MatrixXd right = -1*(Eigen::Matrix<double,18,18>::Identity()-K * H) * J_k * x_error; 
+            Eigen::MatrixXd right = -1*(Eigen::Matrix<double,18,18>::Identity()-K * H) * J_k.inverse() * x_error; 
             Eigen::MatrixXd update_x = left+right;
 
             // 收敛判断
@@ -101,7 +101,7 @@ namespace IESKFLIO
                 }
             
             }
-            // 更新X
+            // x更新方程
             state_x_k.rotation = state_x_k.rotation.toRotationMatrix()*so3Exp(update_x.block<3,1>(0,0));
             state_x_k.rotation.normalize();
             state_x_k.pos = state_x_k.pos+update_x.block<3,1>(3,0);
