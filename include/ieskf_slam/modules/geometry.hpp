@@ -3,6 +3,12 @@
 #include <vector>
 
 namespace IESKFLIO{ 
+    /**
+     * @brief 检测平面Ax+By+Cz+D=0
+     * @param points 检测的点云
+     * @param pabcd 平面参数
+     * @param threhold 阈值
+    */
     template< typename pointTypeT >
     static bool planarCheck(const std::vector<pointTypeT> & points,
                             Eigen::Vector4d &pabcd, float threhold){
@@ -21,7 +27,7 @@ namespace IESKFLIO{
             A(i,2) = points[i].z;
         }
 
-        normal_vector = A.colPivHouseholderQr().solve(B);
+        normal_vector = A.colPivHouseholderQr().solve(B);//求超解方程
 
         for (int j = 0; j < point_num; j++)
         {
