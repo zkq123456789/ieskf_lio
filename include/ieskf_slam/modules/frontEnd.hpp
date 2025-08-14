@@ -9,8 +9,9 @@
 #include "ieskf_slam/modules/ieskf.hpp"
 #include "ieskf_slam/modules/mapManager.hpp"
 #include "ieskf_slam/modules/frontBackPropagate.hpp"
+#include "ieskf_slam/modules/lioZH.hpp"
 #include <pcl/common/transforms.h>
-namespace IESKFLIO{
+namespace IESKFLIO {
 
     class FrontEnd: private ModuleBase
     {
@@ -23,8 +24,14 @@ namespace IESKFLIO{
         std::shared_ptr<IESKF> ieskf_ptr;
         std::shared_ptr<MapManager> map_ptr;
         std::shared_ptr<frontBackPropagate> fbpropagate_ptr;
+        VoxelFilter voxel_filter;
+        LIOZH::Ptr lio_zh_model_ptr;
+        PCLPointCloudPtr filter_point_cloud_ptr;
         double imu_scale = 1.0;
         bool imu_init = false;
+
+        Eigen::Quaterniond extrin_r;//激光雷达和IMU的外参
+        Eigen::Vector3d extrin_t;
     public:
         FrontEnd(const std::string &config_file_path,const std::string & prefix );
         ~FrontEnd() = default;

@@ -9,6 +9,7 @@ namespace IESKFLIO
     :ModuleBase(config_file_path,prefix,"MapManager")
     {
         local_map_ptr = pcl::make_shared<PCLPointCloud>();
+        kdtree_ptr = pcl::make_shared<KDTree>();
     }
     
     MapManager::~MapManager()
@@ -17,12 +18,21 @@ namespace IESKFLIO
     void MapManager::addScan(PCLPointCloudPtr curr_scan, const Eigen::Quaterniond &att_q,const Eigen::Vector3d &pos_t){
         PCLPointCloud scan;
         pcl::transformPointCloud(*curr_scan,scan,compositeTransform(att_q,pos_t).cast<float>());
-        *local_map_ptr += scan;
+        VoxelFilter filter;
+        filter.setLeafSize(0.5,0.5,0.5);
+
+        *local_map_ptr+=scan;
+        filter.setInputCloud(local_map_ptr);
+        filter.filter(*local_map_ptr);
+        kdtree_ptr->setInputCloud(local_map_ptr);
     }
     void MapManager::reset(){
         local_map_ptr->clear();
     }
     PCLPointCloudConstPtr MapManager::getLocalMap(){
         return local_map_ptr;
+    }
+    KDTreeConstPtr MapManager::readKDtree(){
+        return kdtree_ptr;
     }
 } // namespace IESKFLIO

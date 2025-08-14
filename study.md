@@ -93,6 +93,10 @@ J_inv;误差状态到系统状态的转换雅可比的逆矩阵，主要处理�
 ![alt text](状态更新方程.png)
 ### src/ieskf_slam/frontEnd.cpp
 .normal() 求模
+滤波器pcl::VoxelGrid<Point>输入点云
+voxel_filter.setInputCloud(msg.pointcloud.cloud_ptr);
+滤波器输出点云
+voxel_filter.filter(*filter_point_cloud_ptr);
 
 ### src/ieskf_slam/mapManager.cpp
 .cast<float>()将矩阵转换成float类型

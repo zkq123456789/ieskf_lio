@@ -69,8 +69,8 @@ namespace ROSNOETIC
         psd.pose.position.z = X.pos.z();
         path.poses.push_back(psd);
         path_pub.publish(path);
-
-        auto cloud =front_end_ptr->readCurrentPointCloud();
+        IESKFLIO::PCLPointCloud cloud = front_end_ptr->readCurrentPointCloud();
+        pcl:: transformPointCloud(cloud,cloud,IESKFLIO::compositeTransform(X.rotation,X.pos).cast<float>());
         sensor_msgs::PointCloud2 msg;
         pcl::toROSMsg(cloud,msg);
         msg.header.frame_id = "map";
