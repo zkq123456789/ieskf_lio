@@ -9,6 +9,13 @@ namespace IESKFLIO
     // KDTree
     using KDTree = pcl::KdTreeFLANN<Point>;
     using KDTreePtr = KDTree::Ptr;
+    using KDTreeConstPtr = KDTree::ConstPtr;
     // 定义重力常量
     const double GRAVITY = 9.81;
+    template<typename _first, typename _second, typename _third>
+    struct triple{
+        _first first;
+        _second second;
+        _third third;
+    };
 } // namespace IESKFLIO

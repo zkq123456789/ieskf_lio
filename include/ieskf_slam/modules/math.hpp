@@ -6,6 +6,7 @@
 #include <vector>
 
 namespace IESKFLIO{
+    //转换成变换矩阵
     inline Eigen::Matrix4d compositeTransform(const Eigen::Quaterniond &q_, const Eigen::Vector3d &t_){
         Eigen::Matrix4d ans;
         ans.setIdentity();

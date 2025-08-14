@@ -1,8 +1,8 @@
 #ifndef LIOZH_HPP
 #define LIOZH_HPP 
 # include "ieskf_slam/modules/ieskf.hpp"
-# include "ieskf_slam/modules/front_end.hpp"
-# include "ieskf_slam/modules/geomoetry.hpp"
+
+# include "ieskf_slam/modules/geometry.hpp"
 
 
 namespace IESKFLIO
@@ -10,7 +10,6 @@ namespace IESKFLIO
     class LIOZH :public IESKF::OBSERVEZHInterface
     { 
         private:
-            std::shared_ptr<FrontEnd> front_end_ptr;
             const int NEAR_POINTS_NUM = 5;
             //1) point_imu 2)normal_vector 3)distance      
             using loss_type = triple<Eigen::Vector3d, Eigen::Vector3d,double>;
@@ -43,7 +42,7 @@ namespace IESKFLIO
                     //邻近搜索
                     std::vector<int> point_ind;//每个点的索引
                     std::vector<float> point_dis;//每个点的距离
-                    global_map_kd_tree.nearestKSearch(point_world, NEAR_POINTS_NUM, point_ind, point_dis);
+                    global_map_kdtree_ptr->nearestKSearch(point_world, NEAR_POINTS_NUM, point_ind, point_dis);
                     //判断是否有临近点构成平面
                     if(point_dis.size() < NEAR_POINTS_NUM || point_dis[NEAR_POINTS_NUM-1] > 5){
                         continue;
@@ -51,20 +50,20 @@ namespace IESKFLIO
                     std::vector<Point> planar_points;
                     //找到地图中对应的点
                     for(int ni = 0; ni < NEAR_POINTS_NUM; ni++){
-                        plannar_points.push_back(local_map_cptr->at(point_ind[ni]));
+                        planar_points.push_back(local_map_cptr->at(point_ind[ni]));
                     }
-                    Eigen::Vector4d pancd;
+                    Eigen::Vector4d pabcd;
                     if(planarCheck(planar_points, pabcd, 1)){
                         double distance = point_world.x*pabcd(0)+point_world.y*pabcd(1)+point_world.z*pabcd(2)+pabcd(3);
                         //计算残差
                         loss_type loss;
                         // imu系下点的坐标，用于求H矩阵
-                        loss.first = {point_imu.x, point_imu.y, point_imu.z}
+                        loss.first = {point_imu.x, point_imu.y, point_imu.z};
                         //平面法向量
                         loss.second = {pabcd.block<3,1>(0,0)};
                         //残差
                         loss.third = distance;
-                        if (isnan(pd)||isnan(loss.second(0))||isnan(loss.second(1))||isnan(loss.second(2)))continue;
+                        if (isnan(distance)||isnan(loss.second(0))||isnan(loss.second(1))||isnan(loss.second(2)))continue;
                         double s = 1 - 0.9 * fabs(distance) / sqrt(loss.first.norm());
                         if(s > 0.9 ){
                             vaild_points_num++;
@@ -90,7 +89,7 @@ namespace IESKFLIO
                     H.block<1,3>(vi,0) = dr.transpose();
                     H.block<1,3>(vi,3) = loss_real[vi].second.transpose();
                     // Z记录距离
-                    Z(vi,0) = loss_real[vi].thrid;
+                    Z(vi,0) = loss_real[vi].third;
                 }
                 return true;
             }
@@ -99,6 +98,5 @@ namespace IESKFLIO
     
 } // namespace IESKFLIO
 
-class LIOZH :public IESKF
 
 #endif

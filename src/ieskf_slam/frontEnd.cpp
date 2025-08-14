@@ -4,9 +4,37 @@ namespace IESKFLIO
 {
     FrontEnd::FrontEnd(const std::string &config_file_path,const std::string & prefix ):ModuleBase(config_file_path,prefix,"Front End Module")
     {
+        float leaf_size;
+        getParam("filter_leaf_size",leaf_size,0.5f);
+        voxel_filter.setLeafSize(leaf_size,leaf_size,leaf_size);
+
+        std::vector<double>extrin_v;
+        getParam("extrin_r",extrin_v,std::vector<double>());
+        extrin_r.setIdentity();
+        extrin_t.setZero();
+        if(extrin_v.size()==9){
+            Eigen::Matrix3d extrin_r33;
+            extrin_r33<<extrin_v[0],extrin_v[1],extrin_v[2],extrin_v[3],extrin_v[4],extrin_v[5],extrin_v[6],extrin_v[7],extrin_v[8];
+            extrin_r = extrin_r33;
+        }else if (extrin_v.size()==3){
+            extrin_r.x() = extrin_v[0];
+            extrin_r.y() = extrin_v[1];
+            extrin_r.z() = extrin_v[2];
+            extrin_r.w() = extrin_v[3];
+        }
+        getParam("extrin_t",extrin_v,std::vector<double>());
+        if(extrin_v.size()==3){
+            extrin_t<<extrin_v[0],extrin_v[1],extrin_v[2];
+        }
+
         ieskf_ptr = std::make_shared<IESKF>(config_file_path,"ieskf");
         map_ptr  = std::make_shared<MapManager>(config_file_path,"map");
         fbpropagate_ptr = std::make_shared<frontBackPropagate>();
+        
+        lio_zh_model_ptr = std::make_shared<LIOZH>();
+        ieskf_ptr->ob_zh_ptr =lio_zh_model_ptr;
+        filter_point_cloud_ptr = pcl::make_shared<PCLPointCloud>();
+        lio_zh_model_ptr->prepare(map_ptr->readKDtree(),filter_point_cloud_ptr,map_ptr->getLocalMap());
     }
     void FrontEnd::addImu(const IMU &imu){
         imu_deque_.push_back(imu);
@@ -72,7 +100,11 @@ namespace IESKFLIO
             }
             std::cout<<msg.imu_deque.size()<<" scale: "<<imu_scale<<std::endl;
             fbpropagate_ptr->propagate(msg,ieskf_ptr);
-            updatePointCloud(msg);
+            voxel_filter.setInputCloud(msg.pointcloud.cloud_ptr);
+            voxel_filter.filter(*filter_point_cloud_ptr);
+            ieskf_ptr->update();
+            auto x = ieskf_ptr->getState();
+            map_ptr->addScan(filter_point_cloud_ptr,x.rotation,x.pos);
             return true;
         }
         return false;
@@ -93,7 +125,7 @@ namespace IESKFLIO
         pcl::transformPointCloud(*measure_ground_.pointcloud.cloud_ptr,current_pointcloud,trans);
     }
     const PCLPointCloud& FrontEnd::readCurrentPointCloud(){
-        return current_pointcloud;
+        return *filter_point_cloud_ptr;
     }
 
     void FrontEnd::initState(MeasureGroup &measure_ground_){
