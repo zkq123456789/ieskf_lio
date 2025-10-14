@@ -1,6 +1,33 @@
 # 学习记录
+## 代码主要内容
+### 代码架构
+ieskf_LIO
+    ├── CMakeLists.txt
+    ├── include
+    │   ├── ieskf_slam  #存放核心算法
+    │   └── wrapper     #存放与ros框架相关的接口
+    │       ├── ros_humble #ros2
+    │       └── ros_noetic #ros1
+    ├── package.xml
+    └── src              #
+        ├── app          #入口代码存放位置，即包含main函数的文件
+        │   ├── ros_humble
+        │   └── ros_noetic
+        ├── ieskf_slam   #核心算法的实现
+        └── wrapper      #框架相关代码的实现
+            ├── ros_humble
+            └── ros_noetic
+
+ieskf_slam
+    ├── math  #存放数学有关的
+    ├── modules #存放模块
+    └── type #存放数据类型
+
+type中存放数据结构 （1）IMU （2）点云 （3）时间戳 （5）姿态
 ## 代码位置+内容
 
+### include/ieskf_slam/type/imu.hpp
+IMU operator + (const IMU& imu)
 ### include/ieskf_slam/type/Point.hpp
 
 EIGEN_ALIGN16
