@@ -87,6 +87,12 @@ void getParam(const std::string &param_name, T &val, T default_value)设置成�
 
 H观测方程的雅可比矩阵，观测方程（点到平面距离--残差）对状态（state18）求偏导构成的矩阵
 
+### include/ieskf_slam/modules/lioZH.hpp
+liozh.cpp中作为ieskf.hpp中的IESKF::OBSERVEZHInterface派生类，通过
+lio_zh_model_ptr = std::make_shared<LIOZH>();
+ieskf_ptr->ob_zh_ptr =lio_zh_model_ptr;
+将基类指针指向派生类指针
+
 ## 待解决的问题
 在 C++ 项目中设置打印参数等级（如调试级、信息级、警告级、错误级），可以通过日志等级控制实现。以下是几种常用方案，结合你的项目代码结构给出推荐实现方式：
 
