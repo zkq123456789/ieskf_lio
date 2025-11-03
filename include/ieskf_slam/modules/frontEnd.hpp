@@ -22,7 +22,7 @@ namespace IESKFLIO {
         std::deque<PointCloud> pointcloud_deque_;
         PCLPointCloud current_pointcloud;
         std::shared_ptr<IESKF> ieskf_ptr;
-        std::shared_ptr<MapManager> map_ptr;
+        std::shared_ptr<MapManager> map_ptr;//全局地图管理
         std::shared_ptr<frontBackPropagate> fbpropagate_ptr;
         VoxelFilter voxel_filter;
         LIOZH::Ptr lio_zh_model_ptr;
