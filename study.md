@@ -9,12 +9,13 @@ ieskf_LIO
     │       ├── ros_humble #ros2
     │       └── ros_noetic #ros1
     ├── package.xml
-    └── src              #
-        ├── app          #入口代码存放位置，即包含main函数的文件
+    └── src              
+        │
+        ├── ieskf_slam   #核心算法的实现
+        ├── wrapper      #框架相关代码的实现
         │   ├── ros_humble
         │   └── ros_noetic
-        ├── ieskf_slam   #核心算法的实现
-        └── wrapper      #框架相关代码的实现
+        └── app          #入口代码存放位置，即包含main函数的文件
             ├── ros_humble
             └── ros_noetic
 
@@ -23,7 +24,7 @@ ieskf_slam
     ├── modules #存放模块
     └── type #存放数据类型
 
-type中存放数据结构 （1）IMU （2）点云 （3）时间戳 （5）姿态
+type中存放数据结构 （1）IMU （2）点云 （3）时间戳 （4）姿态
 ## 代码位置+内容
 
 ### include/ieskf_slam/type/imu.hpp

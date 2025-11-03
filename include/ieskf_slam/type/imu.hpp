@@ -39,7 +39,7 @@ namespace IESKFLIO
         friend std::ostream & operator<<(std::ostream& ostream,const IMU &imu){
             ostream<<"imu_time: "<<imu.time_stamp.sec()<<" s | imu_acc: "<<imu.acceleration.transpose()<<" | imu_gro: "<< imu.gyroscope.transpose() ;
             return ostream;
-        }
+        }//重载运算符
     };
     
 }//namespace IESKFLIO
