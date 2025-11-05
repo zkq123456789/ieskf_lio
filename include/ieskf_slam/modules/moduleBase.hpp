@@ -32,8 +32,8 @@ namespace IESKFLIO{
                     std::cerr << "读取Yaml错误" << e.msg << std::endl;
                 }
             }
-            if(prefix != "" && config_node_["prefix"]){
-                config_node_ = config_node_["prefix"];
+            if(prefix != "" && config_node_[prefix]){
+                config_node_ = config_node_[prefix];
             }
         };
         virtual ~ModuleBase() = default;

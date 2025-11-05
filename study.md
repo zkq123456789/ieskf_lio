@@ -5,14 +5,14 @@ ieskf_LIO
     ├── CMakeLists.txt
     ├── include
     │   ├── ieskf_slam  #存放核心算法
-    │   └── wrapper     #存放与ros框架相关的接口
+    │   └── ros_include     #存放与ros框架相关的接口
     │       ├── ros_humble #ros2
     │       └── ros_noetic #ros1
     ├── package.xml
     └── src              
         │
         ├── ieskf_slam   #核心算法的实现
-        ├── wrapper      #框架相关代码的实现
+        ├── ros_include      #框架相关代码的实现
         │   ├── ros_humble
         │   └── ros_noetic
         └── app          #入口代码存放位置，即包含main函数的文件
@@ -59,3 +59,4 @@ td::shared_ptr
 
 ### include/ros_include/aviaProcess.hpp
 继承的父类commonlidar，实际使用时定义父类指针，根据雷达类型调用子类的函数
+定义ROSLIDAR::Point是因为pcl::fromROSMsg(msg,avia_cloud);必须话题数据类型与定义的字段名、字段类型、字段顺序完全一致
